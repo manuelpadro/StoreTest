@@ -584,32 +584,71 @@
         }
     }
 
-    // ============================================
-// CHECKOUT POR WHATSAPP CON OPCIONES
+ // ============================================
+// CHECKOUT POR WHATSAPP CON OPCIONES COMPLETAS
 // ============================================
 function checkout() {
     if (state.cart.items.length === 0) return;
     
-    // Crear un selector flotante de opciones
+    const total = state.cart.total;
+    const halfPayment = Math.ceil(total / 2);
+    const deliveryCost = 150; // Costo fijo de mensajería (ajustalo según necesites)
+    
+    // Crear modal de opciones
     const optionsDiv = document.createElement('div');
     optionsDiv.className = 'delivery-options-modal';
     optionsDiv.innerHTML = `
         <div class="delivery-options-content">
             <h3><i class="fas fa-truck"></i> Elegí cómo recibir</h3>
+            
+            <div class="payment-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>💰 Pago: Transferencia bancaria</strong>
+                    <small>Seña del 50% para confirmar pedido</small>
+                </div>
+            </div>
+            
+            <div class="payment-breakdown">
+                <div>
+                    <span>Subtotal productos:</span>
+                    <span>$${total}</span>
+                </div>
+                <div id="deliveryCostRow" style="display: none;">
+                    <span>Costo envío:</span>
+                    <span>+$${deliveryCost}</span>
+                </div>
+                <div id="totalWithDeliveryRow" style="display: none; font-weight: bold;">
+                    <span>TOTAL CON ENVÍO:</span>
+                    <span class="highlight">$${total + deliveryCost}</span>
+                </div>
+                <div style="border-top: 1px dashed var(--primary); margin: 10px 0;"></div>
+                <div>
+                    <span>Seña (50%):</span>
+                    <span class="highlight" id="halfAmount">$${halfPayment}</span>
+                </div>
+                <div>
+                    <span>Restante:</span>
+                    <span id="remainingAmount">$${total - halfPayment}</span>
+                </div>
+            </div>
+            
             <button class="delivery-option-btn" id="optionDelivery">
                 <i class="fas fa-motorcycle"></i>
                 <div>
-                    <strong>Mensajería a domicilio</strong>
-                    <small>Te llevamos el pedido</small>
+                    <strong>Mensajería a domicilio (+$${deliveryCost})</strong>
+                    <small>Te llevamos el pedido a tu casa</small>
                 </div>
             </button>
+            
             <button class="delivery-option-btn" id="optionPickup">
                 <i class="fas fa-store"></i>
                 <div>
                     <strong>Recoger en tienda</strong>
-                    <small>23 y 12, Vedado</small>
+                    <small>23 y 12, Vedado (sin costo)</small>
                 </div>
             </button>
+            
             <button class="delivery-option-cancel" id="cancelOptions">
                 Cancelar
             </button>
@@ -625,13 +664,24 @@ function checkout() {
     
     // Opción Mensajería
     document.getElementById('optionDelivery').addEventListener('click', () => {
-        generateWhatsAppMessage('delivery');
+        // Mostrar costos de envío
+        document.getElementById('deliveryCostRow').style.display = 'flex';
+        document.getElementById('totalWithDeliveryRow').style.display = 'flex';
+        
+        const totalWithDelivery = total + deliveryCost;
+        const halfWithDelivery = Math.ceil(totalWithDelivery / 2);
+        
+        document.getElementById('halfAmount').textContent = `$${halfWithDelivery}`;
+        document.getElementById('remainingAmount').textContent = `$${totalWithDelivery - halfWithDelivery}`;
+        
+        // Preguntar dirección
+        askForAddress('delivery', totalWithDelivery, halfWithDelivery);
         optionsDiv.remove();
     });
     
     // Opción Recoger en tienda
     document.getElementById('optionPickup').addEventListener('click', () => {
-        generateWhatsAppMessage('pickup');
+        askForAddress('pickup', total, halfPayment);
         optionsDiv.remove();
     });
     
@@ -643,9 +693,136 @@ function checkout() {
 }
 
 // ============================================
-// GENERAR MENSAJE DE WHATSAPP
+// PREGUNTAR DIRECCIÓN (para mensajería)
 // ============================================
-function generateWhatsAppMessage(option) {
+function askForAddress(option, totalAmount, halfAmount) {
+    const addressDiv = document.createElement('div');
+    addressDiv.className = 'delivery-options-modal';
+    
+    const isDelivery = option === 'delivery';
+    
+    addressDiv.innerHTML = `
+        <div class="delivery-options-content">
+            <h3><i class="fas fa-map-marker-alt"></i> ${isDelivery ? 'Dirección de entrega' : 'Confirmar pedido'}</h3>
+            
+            ${isDelivery ? `
+                <div class="address-form">
+                    <div class="form-group">
+                        <label><i class="fas fa-road"></i> Calle:</label>
+                        <input type="text" id="street" placeholder="Ej: Calle 23" class="address-input">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-hashtag"></i> Número:</label>
+                            <input type="text" id="number" placeholder="456" class="address-input">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-building"></i> Entre calles:</label>
+                            <input type="text" id="between" placeholder="M y N" class="address-input">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-home"></i> Detalles (opcional):</label>
+                        <input type="text" id="details" placeholder="Ej: Apartamento 3, timbrar a Pérez" class="address-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Teléfono de contacto:</label>
+                        <input type="tel" id="phone" placeholder="Ej: 51234567" class="address-input">
+                    </div>
+                </div>
+            ` : `
+                <div class="pickup-confirm">
+                    <p><i class="fas fa-store"></i> <strong>Dirección de la tienda:</strong></p>
+                    <p>Calle 23 #456 entre M y N, Vedado</p>
+                    <p><i class="fas fa-clock"></i> Horario: 7:00 AM - 9:00 PM</p>
+                </div>
+            `}
+            
+            <div class="transfer-info">
+                <h4><i class="fas fa-university"></i> Datos para transferencia (seña del 50%)</h4>
+                <p><strong>Banco:</strong> BANCO METROPOLITANO S.A.</p>
+                <p><strong>Cuenta Corriente:</strong> 1234 5678 9012 3456</p>
+                <p><strong>Titular:</strong> PadroStore</p>
+                <p><strong>Monto a transferir:</strong> <span class="highlight">$${halfAmount}</span></p>
+            </div>
+            
+            <div class="confirmation-box">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="confirmTransfer">
+                    <span>Confirmo que realizaré la transferencia por <strong>$${halfAmount}</strong> y enviaré el comprobante por WhatsApp</span>
+                </label>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="delivery-option-btn" id="confirmAndSend" disabled>
+                    <i class="fab fa-whatsapp"></i> Confirmar y enviar pedido
+                </button>
+                <button class="delivery-option-cancel" id="backButton">
+                    Volver
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(addressDiv);
+    
+    // Mostrar con animación
+    setTimeout(() => {
+        addressDiv.classList.add('active');
+    }, 10);
+    
+    // Habilitar botón cuando confirmen
+    const confirmCheck = document.getElementById('confirmTransfer');
+    const confirmBtn = document.getElementById('confirmAndSend');
+    
+    if (confirmCheck) {
+        confirmCheck.addEventListener('change', function() {
+            confirmBtn.disabled = !this.checked;
+        });
+    }
+    
+    // Botón confirmar
+    confirmBtn.addEventListener('click', () => {
+        let address = '';
+        let phone = '';
+        
+        if (isDelivery) {
+            const street = document.getElementById('street').value;
+            const number = document.getElementById('number').value;
+            const between = document.getElementById('between').value;
+            const details = document.getElementById('details').value;
+            phone = document.getElementById('phone').value;
+            
+            if (!street || !number || !between || !phone) {
+                alert('Por favor completá los campos obligatorios');
+                return;
+            }
+            
+            address = `${street} #${number}, entre ${between}`;
+            if (details) address += ` (${details})`;
+        }
+        
+        generateWhatsAppMessage(option, totalAmount, halfAmount, address, phone);
+        addressDiv.remove();
+    });
+    
+    // Botón volver
+    document.getElementById('backButton').addEventListener('click', () => {
+        addressDiv.classList.remove('active');
+        setTimeout(() => {
+            addressDiv.remove();
+            checkout(); // Volver al modal anterior
+        }, 300);
+    });
+}
+
+// ============================================
+// GENERAR MENSAJE DE WHATSAPP FINAL
+// ============================================
+function generateWhatsAppMessage(option, totalAmount, halfAmount, address = '', phone = '') {
     let message = '🛒 *NUEVO PEDIDO - PADROSTORE*\n\n';
     message += '*📦 PRODUCTOS:*\n';
     
@@ -653,24 +830,50 @@ function generateWhatsAppMessage(option) {
         message += `• ${item.quantity} x ${item.name} - $${item.price * item.quantity}\n`;
     });
     
-    message += `\n💰 *TOTAL: $${state.cart.total}*`;
+    message += `\n💰 *SUBTOTAL: $${state.cart.total}*`;
     
-    // Agregar opción elegida
     if (option === 'delivery') {
-        message += `\n\n🚚 *OPCIÓN ELEGIDA: Mensajería a domicilio*`;
-        message += `\n📍 *Dirección:* [COMPLETAR DIRECCIÓN]`;
+        const deliveryCost = totalAmount - state.cart.total;
+        message += `\n🚚 *COSTO ENVÍO: +$${deliveryCost}*`;
+        message += `\n💵 *TOTAL CON ENVÍO: $${totalAmount}*`;
     } else {
-        message += `\n\n🏪 *OPCIÓN ELEGIDA: Recoger en tienda*`;
-        message += `\n📍 *Dirección:* 23 y 12, Vedado`;
+        message += `\n💵 *TOTAL: $${totalAmount}*`;
     }
     
-    message += `\n💳 *Pago:* Efectivo/Transferencia`;
+    message += `\n💳 *SEÑA (50%): $${halfAmount}*`;
+    
+    // Agregar opción elegida y dirección
+    if (option === 'delivery') {
+        message += `\n\n🚚 *OPCIÓN: Mensajería a domicilio*`;
+        message += `\n📍 *DIRECCIÓN:* ${address}`;
+        message += `\n📱 *CONTACTO:* ${phone}`;
+    } else {
+        message += `\n\n🏪 *OPCIÓN: Recoger en tienda*`;
+        message += `\n📍 *DIRECCIÓN:* 23 y 12, Vedado`;
+    }
+    
+    // Datos bancarios
+    message += `\n\n🏦 *DATOS PARA TRANSFERENCIA (SEÑA):*`;
+    message += `\nBanco: BANCO METROPOLITANO S.A.`;
+    message += `\nCuenta: 1234 5678 9012 3456`;
+    message += `\nTitular: PadroStore`;
+    message += `\nMonto: $${halfAmount}`;
+    
+    // Instrucciones finales
+    message += `\n\n📲 *PARA CONFIRMAR EL PEDIDO:*`;
+    message += `\n1. Realizá la transferencia por $${halfAmount}`;
+    message += `\n2. Tomá captura del comprobante`;
+    message += `\n3. Enviá la imagen por este chat`;
+    message += `\n4. Escribí: "Ya transferí, mi pedido es para [tu nombre]"`;
+    
+    message += `\n\n⏳ *RESTANTE A PAGAR:* $${totalAmount - halfAmount} (al recibir)`;
+    
     message += `\n\n✅ *Confirmar pedido*`;
     
     const url = `https://wa.me/5358873126?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
     
-    // Opcional: Vaciar carrito después de enviar
+    // Opcional: Vaciar carrito
     setTimeout(() => {
         if (confirm('¿Vaciar carrito después del pedido?')) {
             clearCart();
@@ -866,5 +1069,6 @@ function generateWhatsAppMessage(option) {
     } else {
         init();
     }
+
 
 })();
