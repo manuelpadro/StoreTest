@@ -592,7 +592,7 @@ function checkout() {
     
     const total = state.cart.total;
     const halfPayment = Math.ceil(total / 2);
-    const deliveryCost = 150; // Costo fijo de mensajería (ajustalo según necesites)
+    const deliveryCost = "a gestionar con operador"; // Costo fijo de mensajería (ajustalo según necesites)
     
     // Crear modal de opciones
     const optionsDiv = document.createElement('div');
@@ -1072,3 +1072,4 @@ function generateWhatsAppMessage(option, totalAmount, halfAmount, address = '', 
 
 
 })();
+
