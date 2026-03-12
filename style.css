@@ -1469,3 +1469,46 @@ body.dark-mode .theme-toggle .fa-moon { display: none; }
     }
 
 }
+
+/* ===== CORRECCIÓN DE SCROLL PARA MÓVILES ===== */
+.delivery-options-modal {
+    overflow-y: auto !important;  /* Permite scroll en el modal completo */
+    -webkit-overflow-scrolling: touch;  /* Scroll suave en iOS */
+    padding: 15px 0;  /* Espacio alrededor */
+}
+
+.delivery-options-content {
+    max-height: none !important;  /* Quita límite de altura */
+    margin: auto;  /* Centrado vertical */
+    position: relative;
+    top: 0;
+    transform: none !important;  /* Evita problemas de transform */
+    overflow-y: visible;
+}
+
+/* Ajustes específicos para el contenido */
+.address-form, 
+.transfer-info, 
+.confirmation-box {
+    max-height: none;
+    overflow: visible;
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .delivery-options-modal {
+        align-items: flex-start;  /* Alinea al tope para mejor scroll */
+        padding: 10px;
+    }
+    
+    .delivery-options-content {
+        width: 100%;
+        margin: 10px auto;
+    }
+    
+    /* Mejora para el scroll en iOS */
+    .address-form input,
+    .confirmation-box {
+        -webkit-overflow-scrolling: touch;
+    }
+}
