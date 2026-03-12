@@ -695,7 +695,7 @@
                 <div class="transfer-info">
                     <h4><i class="fas fa-university"></i> Datos para transferencia</h4>
                     <p><strong>Banco:</strong> BANCO METROPOLITANO S.A.</p>
-                    <p><strong>Cuenta:</strong> 1234 5678 9012 3456</p>
+                    <p><strong>Cuenta:</strong> 9205 9598 7920 9162</p>
                     <p><strong>Titular:</strong> PadroStore</p>
                     <p><strong>Monto (seña):</strong> <span class="highlight">$${halfAmount}</span></p>
                 </div>
@@ -964,3 +964,4 @@
     }
 
 })();
+
