@@ -1,5 +1,5 @@
 /**
- * PADROSTORE - VERSIÓN CORREGIDA Y MEJORADA
+ * PADROSTORE - VERSIÓN ULTRA CORREGIDA
  */
 
 (function() {
@@ -11,7 +11,7 @@
     const PRODUCTS = {
         destacados: [
             { id: 1, name: 'Vino Tinto Cabernet', price: 450, category: 'vinos', icon: 'fa-wine-bottle', destacado: true },
-            { id: 2, name: 'Paquete de Pollo 2kg', price: 680, category: 'carnes', icon: 'fa-drumstick-bite', destacado: true },
+            { id:  2, name: 'Paquete de Pollo 2kg', price: 680, category: 'carnes', icon: 'fa-drumstick-bite', destacado: true },
             { id: 3, name: 'Lomo Ahumado 1kg', price: 520, category: 'carnes', icon: 'fa-bacon', destacado: true },
             { id: 4, name: 'Champán Brut', price: 890, category: 'vinos', icon: 'fa-champagne-glasses', destacado: true }
         ],
@@ -55,7 +55,7 @@
     // ============================================
     let state = {
         cart: {
-            items: [],  // Comienza vacío (0 items)
+            items: [],
             total: 0,
             count: 0
         },
@@ -90,7 +90,8 @@
     // INICIALIZACIÓN
     // ============================================
     function init() {
-        console.log('🚀 PadroStore - Versión Corregida');
+        console.log('🚀 PadroStore - Versión Ultra Corregida');
+        console.log('📦 PRODUCTOS cargados:', PRODUCTS); // Verificar que los productos existen
         loadState();
         renderProducts();
         renderFeatured();
@@ -106,23 +107,20 @@
     // ============================================
     function loadState() {
         try {
-            // Cargar carrito - si no existe, comienza vacío
             const savedCart = localStorage.getItem('padro_cart_v2');
             if (savedCart) {
                 state.cart = JSON.parse(savedCart);
             } else {
-                // Asegurar que comienza vacío
                 state.cart = { items: [], total: 0, count: 0 };
             }
             
-            // Cargar preferencia de modo oscuro
             const savedTheme = localStorage.getItem('padro_theme');
             if (savedTheme === 'dark') {
                 state.darkMode = true;
                 document.body.classList.add('dark-mode');
             }
         } catch (e) {
-            console.log('Error cargando estado');
+            console.log('Error cargando estado:', e);
             state.cart = { items: [], total: 0, count: 0 };
         }
     }
@@ -132,7 +130,7 @@
             localStorage.setItem('padro_cart_v2', JSON.stringify(state.cart));
             localStorage.setItem('padro_theme', state.darkMode ? 'dark' : 'light');
         } catch (e) {
-            console.log('Error guardando estado');
+            console.log('Error guardando estado:', e);
         }
     }
 
@@ -140,9 +138,14 @@
     // RENDERIZADO DE PRODUCTOS DESTACADOS
     // ============================================
     function renderFeatured() {
-        if (!DOM.featuredContainer) return;
+        if (!DOM.featuredContainer) {
+            console.error('❌ No se encontró el contenedor de destacados');
+            return;
+        }
         
         const featured = PRODUCTS.destacados;
+        console.log('🎯 Renderizando destacados:', featured);
+        
         let html = '';
         
         featured.forEach(product => {
@@ -164,8 +167,6 @@
         });
         
         DOM.featuredContainer.innerHTML = html;
-        
-        // Agregar event listeners a los botones de cantidad y agregar
         attachFeaturedEvents();
     }
 
@@ -173,11 +174,13 @@
     // RENDERIZADO DE PRODUCTOS (categorías)
     // ============================================
     function renderProducts() {
-        if (!DOM.productsContainer) return;
+        if (!DOM.productsContainer) {
+            console.error('❌ No se encontró el contenedor de productos');
+            return;
+        }
         
         let filteredProducts = [];
         
-        // Obtener todos los productos
         const allProducts = [
             ...PRODUCTS.aceites,
             ...PRODUCTS.carnes,
@@ -187,19 +190,18 @@
             ...PRODUCTS.abarrotes
         ];
         
-        // Aplicar filtros
+        console.log('🎯 Todos los productos:', allProducts.length);
+        
         filteredProducts = allProducts.filter(product => {
             const matchesFilter = state.currentFilter === 'todos' || product.category === state.currentFilter;
             const matchesSearch = product.name.toLowerCase().includes(state.searchTerm.toLowerCase());
             return matchesFilter && matchesSearch;
         });
         
-        // Actualizar contador
         if (DOM.resultsCount) {
             DOM.resultsCount.textContent = `Mostrando ${filteredProducts.length} productos`;
         }
         
-        // Agrupar por categoría
         const grouped = {};
         filteredProducts.forEach(product => {
             if (!grouped[product.category]) {
@@ -208,7 +210,6 @@
             grouped[product.category].push(product);
         });
         
-        // Renderizar
         let html = '';
         
         if (filteredProducts.length === 0) {
@@ -236,8 +237,6 @@
         }
         
         DOM.productsContainer.innerHTML = html;
-        
-        // Re-attach event listeners
         attachProductEvents();
     }
 
@@ -263,7 +262,6 @@
     // EVENT LISTENERS PARA PRODUCTOS DESTACADOS
     // ============================================
     function attachFeaturedEvents() {
-        // Botones de cantidad en destacados
         document.querySelectorAll('.featured-card .qty-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -282,7 +280,6 @@
             });
         });
         
-        // Botones agregar en destacados
         document.querySelectorAll('.featured-card .btn-add-cart').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -295,18 +292,14 @@
                         return;
                     }
                     
-                    // Reemplazar &apos; de vuelta a '
                     const fixedData = productData.replace(/&apos;/g, "'");
                     const product = JSON.parse(fixedData);
                     
-                    // Obtener cantidad del selector en esta tarjeta
                     const card = this.closest('.featured-card');
                     const qtySpan = card.querySelector('.qty-number');
                     const quantity = parseInt(qtySpan.textContent) || 1;
                     
                     addToCart(product, quantity);
-                    
-                    // Reset cantidad a 1 después de agregar
                     qtySpan.textContent = '1';
                 } catch (error) {
                     console.error('Error adding to cart:', error);
@@ -320,7 +313,6 @@
     // EVENT LISTENERS PARA PRODUCTOS NORMALES
     // ============================================
     function attachProductEvents() {
-        // Botones de cantidad en productos normales
         document.querySelectorAll('.product-item .qty-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -339,7 +331,6 @@
             });
         });
         
-        // Botones agregar en productos normales
         document.querySelectorAll('.product-item .btn-add-cart-small').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -352,18 +343,14 @@
                         return;
                     }
                     
-                    // Reemplazar &apos; de vuelta a '
                     const fixedData = productData.replace(/&apos;/g, "'");
                     const product = JSON.parse(fixedData);
                     
-                    // Obtener cantidad del selector en este item
                     const item = this.closest('.product-item');
                     const qtySpan = item.querySelector('.qty-number');
                     const quantity = parseInt(qtySpan.textContent) || 1;
                     
                     addToCart(product, quantity);
-                    
-                    // Reset cantidad a 1 después de agregar
                     qtySpan.textContent = '1';
                 } catch (error) {
                     console.error('Error adding to cart:', error);
@@ -409,14 +396,11 @@
             return;
         }
         
-        // Buscar si el producto ya existe en el carrito por ID
         const existingItemIndex = state.cart.items.findIndex(item => item.id === product.id);
         
         if (existingItemIndex !== -1) {
-            // Si existe, aumentar cantidad
             state.cart.items[existingItemIndex].quantity += quantity;
         } else {
-            // Si no existe, agregar nuevo
             state.cart.items.push({
                 ...product,
                 quantity: quantity
@@ -427,7 +411,6 @@
         updateCartUI();
         showNotification(`✅ ${quantity} x ${product.name} agregado`, 'success');
         
-        // Animación del contador
         if (DOM.cartCount) {
             DOM.cartCount.style.animation = 'pulse 0.3s';
             setTimeout(() => {
@@ -443,7 +426,6 @@
             item.quantity += change;
             
             if (item.quantity <= 0) {
-                // Eliminar con animación
                 removeItemWithAnimation(index, item.name);
             } else {
                 showNotification(`📦 ${item.name}: ${oldQuantity} → ${item.quantity}`, 'info');
@@ -493,15 +475,12 @@
     }
 
     function updateCartUI() {
-        // Actualizar contador
         state.cart.count = state.cart.items.reduce((sum, item) => sum + item.quantity, 0);
         state.cart.total = state.cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         
-        // Actualizar DOM
         if (DOM.cartCount) {
             DOM.cartCount.textContent = state.cart.count;
             
-            // Clase para cuando está vacío
             if (state.cart.count === 0) {
                 DOM.cartCount.classList.add('zero');
             } else {
@@ -513,7 +492,6 @@
             DOM.cartTotal.textContent = `$${state.cart.total}`;
         }
         
-        // Actualizar items del carrito
         if (DOM.cartItems) {
             if (state.cart.items.length === 0) {
                 DOM.cartItems.innerHTML = `
@@ -549,7 +527,6 @@
                     `;
                 });
                 
-                // Agregar botón para vaciar carrito
                 html += `
                     <div style="text-align: center; margin-top: 15px;">
                         <button class="clear-cart-btn" onclick="window.clearCart()">
@@ -561,7 +538,6 @@
                 DOM.cartItems.innerHTML = html;
                 if (DOM.checkoutBtn) DOM.checkoutBtn.disabled = false;
                 
-                // Opciones de entrega - NUEVO
                 if (DOM.deliveryNote) {
                     DOM.deliveryNote.innerHTML = `
                         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -585,7 +561,7 @@
     }
 
     // ============================================
-    // CHECKOUT POR WHATSAPP CON OPCIONES COMPLETAS
+    // CHECKOUT POR WHATSAPP
     // ============================================
     function checkout() {
         if (state.cart.items.length === 0) return;
@@ -593,7 +569,6 @@
         const total = state.cart.total;
         const halfPayment = Math.ceil(total / 2);
         
-        // Crear modal de opciones
         const optionsDiv = document.createElement('div');
         optionsDiv.className = 'delivery-options-modal';
         optionsDiv.innerHTML = `
@@ -604,7 +579,7 @@
                     <i class="fas fa-info-circle"></i>
                     <div>
                         <strong>💰 Pago: Transferencia bancaria</strong>
-                        <small>Importe del 50% para confirmar pedido</small>
+                        <small>Seña del 50% para confirmar pedido</small>
                     </div>
                 </div>
                 
@@ -613,22 +588,14 @@
                         <span>Subtotal productos:</span>
                         <span>$${total}</span>
                     </div>
-                    <div id="deliveryCostRow" style="display: none;">
-                        <span>Costo envío:</span>
-                        <span>A gestionar con operador 📞</span>
-                    </div>
-                    <div id="totalWithDeliveryRow" style="display: none; font-weight: bold;">
-                        <span>TOTAL CON ENVÍO:</span>
-                        <span class="highlight">$${total} + envío*</span>
-                    </div>
                     <div style="border-top: 1px dashed var(--primary); margin: 10px 0;"></div>
                     <div>
                         <span>Seña (50%):</span>
-                        <span class="highlight" id="halfAmount">$${halfPayment}</span>
+                        <span class="highlight">$${halfPayment}</span>
                     </div>
                     <div>
                         <span>Restante:</span>
-                        <span id="remainingAmount">$${total - halfPayment}</span>
+                        <span>$${total - halfPayment}</span>
                     </div>
                 </div>
                 
@@ -636,7 +603,7 @@
                     <i class="fas fa-motorcycle"></i>
                     <div>
                         <strong>Mensajería a domicilio</strong>
-                        <small>📞 Costo a gestionar con operador (según zona)</small>
+                        <small>📞 Costo a gestionar con operador</small>
                     </div>
                 </button>
                 
@@ -656,34 +623,20 @@
         
         document.body.appendChild(optionsDiv);
         
-        // Mostrar con animación
         setTimeout(() => {
             optionsDiv.classList.add('active');
         }, 10);
         
-        // Opción Mensajería
         document.getElementById('optionDelivery').addEventListener('click', () => {
-            // Mostrar costos de envío
-            document.getElementById('deliveryCostRow').style.display = 'flex';
-            document.getElementById('totalWithDeliveryRow').style.display = 'flex';
-            
-            // Para mensajería, la seña sigue siendo sobre el total de productos
-            // El envío se paga al recibir junto con el resto
-            document.getElementById('halfAmount').textContent = `$${halfPayment}`;
-            document.getElementById('remainingAmount').textContent = `$${total - halfPayment} + envío*`;
-            
-            // Preguntar dirección
             askForAddress('delivery', total, halfPayment);
             optionsDiv.remove();
         });
         
-        // Opción Recoger en tienda
         document.getElementById('optionPickup').addEventListener('click', () => {
             askForAddress('pickup', total, halfPayment);
             optionsDiv.remove();
         });
         
-        // Cancelar
         document.getElementById('cancelOptions').addEventListener('click', () => {
             optionsDiv.classList.remove('active');
             setTimeout(() => optionsDiv.remove(), 300);
@@ -691,7 +644,7 @@
     }
 
     // ============================================
-    // PREGUNTAR DIRECCIÓN (para mensajería)
+    // PREGUNTAR DIRECCIÓN
     // ============================================
     function askForAddress(option, totalAmount, halfAmount) {
         const addressDiv = document.createElement('div');
@@ -723,11 +676,11 @@
                         
                         <div class="form-group">
                             <label><i class="fas fa-home"></i> Detalles (opcional):</label>
-                            <input type="text" id="details" placeholder="Ej: Apartamento 3, timbrar a Pérez" class="address-input">
+                            <input type="text" id="details" placeholder="Ej: Apartamento 3" class="address-input">
                         </div>
                         
                         <div class="form-group">
-                            <label><i class="fas fa-phone"></i> Teléfono de contacto:</label>
+                            <label><i class="fas fa-phone"></i> Teléfono:</label>
                             <input type="tel" id="phone" placeholder="Ej: 51234567" class="address-input">
                         </div>
                     </div>
@@ -740,24 +693,23 @@
                 `}
                 
                 <div class="transfer-info">
-                    <h4><i class="fas fa-university"></i> Datos para transferencia (seña del 50%)</h4>
+                    <h4><i class="fas fa-university"></i> Datos para transferencia</h4>
                     <p><strong>Banco:</strong> BANCO METROPOLITANO S.A.</p>
-                    <p><strong>Cuenta Corriente:</strong> 1234 5678 9012 3456</p>
+                    <p><strong>Cuenta:</strong> 1234 5678 9012 3456</p>
                     <p><strong>Titular:</strong> PadroStore</p>
-                    <p><strong>Monto a transferir:</strong> <span class="highlight">$${halfAmount}</span></p>
-                    <p><small>📱 Número para confirmar: +5358873126</small></p>
+                    <p><strong>Monto (seña):</strong> <span class="highlight">$${halfAmount}</span></p>
                 </div>
                 
                 <div class="confirmation-box">
                     <label class="checkbox-label">
                         <input type="checkbox" id="confirmTransfer">
-                        <span>Confirmo que realizaré la transferencia por <strong>$${halfAmount}</strong> y enviaré el comprobante por WhatsApp</span>
+                        <span>Confirmo que transferiré <strong>$${halfAmount}</strong> y enviaré el comprobante</span>
                     </label>
                 </div>
                 
                 <div class="modal-actions">
                     <button class="delivery-option-btn" id="confirmAndSend" disabled>
-                        <i class="fab fa-whatsapp"></i> Confirmar y enviar pedido
+                        <i class="fab fa-whatsapp"></i> Confirmar y enviar
                     </button>
                     <button class="delivery-option-cancel" id="backButton">
                         Volver
@@ -768,12 +720,10 @@
         
         document.body.appendChild(addressDiv);
         
-        // Mostrar con animación
         setTimeout(() => {
             addressDiv.classList.add('active');
         }, 10);
         
-        // Habilitar botón cuando confirmen
         const confirmCheck = document.getElementById('confirmTransfer');
         const confirmBtn = document.getElementById('confirmAndSend');
         
@@ -783,7 +733,6 @@
             });
         }
         
-        // Botón confirmar
         confirmBtn.addEventListener('click', () => {
             let address = '';
             let phone = '';
@@ -796,7 +745,7 @@
                 phone = document.getElementById('phone').value;
                 
                 if (!street || !number || !between || !phone) {
-                    alert('Por favor completá los campos obligatorios');
+                    alert('Completá los campos obligatorios');
                     return;
                 }
                 
@@ -808,18 +757,17 @@
             addressDiv.remove();
         });
         
-        // Botón volver
         document.getElementById('backButton').addEventListener('click', () => {
             addressDiv.classList.remove('active');
             setTimeout(() => {
                 addressDiv.remove();
-                checkout(); // Volver al modal anterior
+                checkout();
             }, 300);
         });
     }
 
     // ============================================
-    // GENERAR MENSAJE DE WHATSAPP FINAL
+    // GENERAR MENSAJE DE WHATSAPP
     // ============================================
     function generateWhatsAppMessage(option, totalAmount, halfAmount, address = '', phone = '') {
         let message = '🛒 *NUEVO PEDIDO - PADROSTORE*\n\n';
@@ -832,58 +780,36 @@
         message += `\n💰 *SUBTOTAL: $${state.cart.total}*`;
         
         if (option === 'delivery') {
-            message += `\n🚚 *COSTO DE ENVÍO: A gestionar con operador*`;
-            message += `\n💵 *TOTAL: $${totalAmount} + envío*`;
-        } else {
-            message += `\n💵 *TOTAL: $${totalAmount}*`;
+            message += `\n🚚 *ENVÍO: A gestionar con operador*`;
         }
         
-        message += `\n💳 *MONTO (50%): $${halfAmount}*`;
+        message += `\n💵 *TOTAL: $${totalAmount}${option === 'delivery' ? ' + envío' : ''}*`;
+        message += `\n💳 *SEÑA (50%): $${halfAmount}*`;
         
-        // Agregar opción elegida y dirección
         if (option === 'delivery') {
-            message += `\n\n🚚 *OPCIÓN: Mensajería a domicilio*`;
-            message += `\n📍 *DIRECCIÓN:* ${address}`;
+            message += `\n\n🚚 *DIRECCIÓN:* ${address}`;
             message += `\n📱 *CONTACTO:* ${phone}`;
         } else {
-            message += `\n\n🏪 *OPCIÓN: Recoger en tienda*`;
-            message += `\n📍 *DIRECCIÓN:* 23 y 12, Vedado`;
+            message += `\n\n🏪 *RECOGER EN:* 23 y 12, Vedado`;
         }
         
-        // Datos bancarios
-        message += `\n\n🏦 *DATOS PARA TRANSFERENCIA (SEÑA):*`;
+        message += `\n\n🏦 *DATOS PARA TRANSFERENCIA:*`;
         message += `\nBanco: BANCO METROPOLITANO S.A.`;
-        message += `\nCuenta: 9205959879209162;
+        message += `\nCuenta: 1234 5678 9012 3456`;
         message += `\nTitular: PadroStore`;
         message += `\nMonto: $${halfAmount}`;
         
-        // Instrucciones finales
-        message += `\n\n📲 *PARA CONFIRMAR EL PEDIDO:*`;
-        message += `\n1. Realiza la transferencia por $${halfAmount}`;
-        message += `\n2. Toma captura del comprobante`;
-        message += `\n3. Envia la imagen por este chat`;
-        message += `\n4. Escribe: "Ya transferí, mi pedido es para [tu nombre]"`;
-        
-        message += `\n\n⏳ *RESTANTE A PAGAR:* $${totalAmount - halfAmount} ${option === 'delivery' ? '+ envío' : ''} (al recibir)`;
-        
+        message += `\n\n📲 *CONFIRMAR:* Enviar comprobante por este chat`;
         message += `\n\n✅ *Confirmar pedido*`;
         
         const url = `https://wa.me/5358873126?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank');
-        
-        // Opcional: Vaciar carrito
-        setTimeout(() => {
-            if (confirm('¿Vaciar carrito después del pedido?')) {
-                clearCart();
-            }
-        }, 1000);
     }
 
     // ============================================
     // NOTIFICACIONES
     // ============================================
     function showNotification(message, type = 'info') {
-        // Remover notificaciones anteriores
         const oldNotifications = document.querySelectorAll('.notification');
         oldNotifications.forEach(n => n.remove());
         
@@ -904,16 +830,10 @@
             color: ${type === 'error' ? 'white' : '#2d6a4f'};
             padding: 1rem 2rem;
             border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             z-index: 10001;
             animation: slideInRight 0.3s;
             font-weight: 500;
             border: 2px solid white;
-            font-size: 1rem;
-            max-width: 350px;
         `;
         
         notification.innerHTML = `<span>${message}</span>`;
@@ -929,7 +849,6 @@
     // EVENT LISTENERS GENERALES
     // ============================================
     function setupEventListeners() {
-        // Carrito
         if (DOM.showCartBtn) {
             DOM.showCartBtn.addEventListener('click', () => {
                 DOM.cartSidebar.classList.add('active');
@@ -943,7 +862,7 @@
         }
         
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && DOM.cartSidebar && DOM.cartSidebar.classList.contains('active')) {
+            if (e.key === 'Escape' && DOM.cartSidebar?.classList.contains('active')) {
                 DOM.cartSidebar.classList.remove('active');
             }
         });
@@ -952,16 +871,11 @@
             DOM.checkoutBtn.addEventListener('click', checkout);
         }
         
-        // Búsqueda
         if (DOM.searchInput) {
             DOM.searchInput.addEventListener('input', (e) => {
                 state.searchTerm = e.target.value;
                 if (DOM.clearSearch) {
-                    if (state.searchTerm.length > 0) {
-                        DOM.clearSearch.classList.add('visible');
-                    } else {
-                        DOM.clearSearch.classList.remove('visible');
-                    }
+                    DOM.clearSearch.classList.toggle('visible', state.searchTerm.length > 0);
                 }
                 renderProducts();
             });
@@ -976,7 +890,6 @@
             });
         }
         
-        // Filtros
         if (DOM.filterChips) {
             DOM.filterChips.forEach(chip => {
                 chip.addEventListener('click', () => {
@@ -988,36 +901,20 @@
             });
         }
         
-        // Modo oscuro
         if (DOM.themeToggle) {
             DOM.themeToggle.addEventListener('click', toggleTheme);
         }
-        
-        // Cerrar carrito al hacer click fuera
-        document.addEventListener('click', (e) => {
-            if (DOM.cartSidebar && 
-                DOM.cartSidebar.classList.contains('active') && 
-                !DOM.cartSidebar.contains(e.target) && 
-                DOM.showCartBtn && 
-                !DOM.showCartBtn.contains(e.target)) {
-                DOM.cartSidebar.classList.remove('active');
-            }
-        });
     }
 
     // ============================================
-    // HORARIO DE COMPRA
+    // HORARIO
     // ============================================
     function checkSchedule() {
         const now = new Date();
         const hours = now.getHours();
-        const minutes = now.getMinutes();
-        const currentTime = hours + minutes / 60;
+        const currentTime = hours + now.getMinutes() / 60;
         
-        const openTime = 7; // 7:00 AM
-        const closeTime = 21; // 9:00 PM
-        
-        const isOpen = currentTime >= openTime && currentTime < closeTime;
+        const isOpen = currentTime >= 7 && currentTime < 21;
         
         if (DOM.scheduleStatus) {
             if (isOpen) {
@@ -1025,7 +922,7 @@
                 DOM.scheduleStatus.style.background = '#a8e6cf';
                 DOM.scheduleStatus.style.color = '#2d6a4f';
             } else {
-                DOM.scheduleStatus.innerHTML = '🔴 Cerrado - Volvemos mañana 7:00 AM';
+                DOM.scheduleStatus.innerHTML = '🔴 Cerrado - 7:00 AM';
                 DOM.scheduleStatus.style.background = '#ef4444';
                 DOM.scheduleStatus.style.color = 'white';
             }
@@ -1036,25 +933,23 @@
 
     function startScheduleChecker() {
         checkSchedule();
-        setInterval(checkSchedule, 60000); // Verificar cada minuto
+        setInterval(checkSchedule, 60000);
     }
 
     // ============================================
     // MODO OSCURO
     // ============================================
-    function setupTheme() {
-        // Ya se cargó en loadState
-    }
+    function setupTheme() {}
 
     function toggleTheme() {
         state.darkMode = !state.darkMode;
         document.body.classList.toggle('dark-mode');
         saveState();
-        showNotification(state.darkMode ? '🌙 Modo oscuro activado' : '☀️ Modo claro activado', 'info');
+        showNotification(state.darkMode ? '🌙 Modo oscuro' : '☀️ Modo claro', 'info');
     }
 
     // ============================================
-    // EXPONER FUNCIONES GLOBALES
+    // EXPONER FUNCIONES
     // ============================================
     window.addToCart = addToCart;
     window.updateQuantity = updateQuantity;
