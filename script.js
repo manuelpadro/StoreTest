@@ -592,7 +592,7 @@ function checkout() {
     
     const total = state.cart.total;
     const halfPayment = Math.ceil(total / 2);
-    const deliveryCost = "a gestionar con operador"; // Costo fijo de mensajería (ajustalo según necesites)
+    const deliveryCost = a gestionar con operador ; 
     
     // Crear modal de opciones
     const optionsDiv = document.createElement('div');
@@ -605,7 +605,7 @@ function checkout() {
                 <i class="fas fa-info-circle"></i>
                 <div>
                     <strong>💰 Pago: Transferencia bancaria</strong>
-                    <small>Seña del 50% para confirmar pedido</small>
+                    <small> Importe del 50% para confirmar pedido</small>
                 </div>
             </div>
             
@@ -742,9 +742,10 @@ function askForAddress(option, totalAmount, halfAmount) {
             `}
             
             <div class="transfer-info">
-                <h4><i class="fas fa-university"></i> Datos para transferencia (seña del 50%)</h4>
+                <h4><i class="fas fa-university"></i> Datos para transferencia (monto del 50%)</h4>
                 <p><strong>Banco:</strong> BANCO METROPOLITANO S.A.</p>
-                <p><strong>Cuenta Corriente:</strong> 1234 5678 9012 3456</p>
+                <p><strong>Cuenta Corriente:</strong> 9205 9598 7920 9162</p>
+                <p><strong>Numero a confirmar:</strong> +5358873126</p>
                 <p><strong>Titular:</strong> PadroStore</p>
                 <p><strong>Monto a transferir:</strong> <span class="highlight">$${halfAmount}</span></p>
             </div>
@@ -752,7 +753,7 @@ function askForAddress(option, totalAmount, halfAmount) {
             <div class="confirmation-box">
                 <label class="checkbox-label">
                     <input type="checkbox" id="confirmTransfer">
-                    <span>Confirmo que realizaré la transferencia por <strong>$${halfAmount}</strong> y enviaré el comprobante por WhatsApp</span>
+                    <span> Confirmar la transferencia y enviar el comprobante por WhatsApp</span>
                 </label>
             </div>
             
@@ -1072,4 +1073,5 @@ function generateWhatsAppMessage(option, totalAmount, halfAmount, address = '', 
 
 
 })();
+
 
