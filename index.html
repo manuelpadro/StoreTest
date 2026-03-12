@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>PadroStore - Tienda Online</title>
+    <meta name="description" content="PadroStore: aceite, vinos, carnes, bebidas y más. Compra fácil por WhatsApp">
+    
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ===== MODO OSCURO TOGGLE ===== -->
+    <div class="theme-toggle">
+        <button id="themeToggle">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <!-- ===== HERO SECTION MEJORADA ===== -->
+    <section class="hero" id="inicio" style="background-image: url('https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
+        <div class="hero-overlay">
+            <div class="hero-content">
+                <span class="hero-badge">Bienvenidos a</span>
+                <h1 class="main-title">PADRO<span>STORE</span></h1>
+                <p class="hero-subtitle">Productos frescos y de calidad para tu hogar</p>
+                
+                <div class="hero-features">
+                    <span><i class="fas fa-check-circle"></i> La mejor atencion</span>
+                    <span><i class="fas fa-check-circle"></i> Mejor precio</span>
+                    <span><i class="fas fa-check-circle"></i> Calidad asegurada</span>
+                </div>
+                
+                <div class="hero-buttons">
+                    <a href="#productos" class="btn primary">
+                        <i class="fas fa-shopping-basket"></i> Ver Productos
+                    </a>
+                    <a href="#contacto" class="btn secondary">
+                        <i class="fab fa-whatsapp"></i> Contactar
+                    </a>
+                </div>
+
+                <!-- HORARIO DE COMPRA -->
+                <div class="schedule-badge">
+                    <i class="fas fa-clock"></i>
+                    Horario de compra: <strong>7:00 AM - 9:00 PM</strong>
+                    <span class="schedule-status" id="scheduleStatus">🟢 Abierto ahora</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== BARRA DE BÚSQUEDA ===== -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Buscar productos... (ej: vino, pollo, arroz)" class="search-input">
+                <button id="clearSearch" class="clear-search"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <!-- FILTROS RÁPIDOS -->
+            <div class="filter-chips" id="filterChips">
+                <button class="chip active" data-category="todos">Todos</button>
+                <button class="chip" data-category="aceites"><i class="fas fa-oil-can"></i> Aceites</button>
+                <button class="chip" data-category="carnes"><i class="fas fa-drumstick-bite"></i> Carnes</button>
+                <button class="chip" data-category="vinos"><i class="fas fa-wine-bottle"></i> Vinos</button>
+                <button class="chip" data-category="bebidas"><i class="fas fa-coke-bottle"></i> Bebidas</button>
+                <button class="chip" data-category="snacks"><i class="fas fa-cookie"></i> Snacks</button>
+                <button class="chip" data-category="abarrotes"><i class="fas fa-box-open"></i> Abarrotes</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CARRITO FLOTANTE MEJORADO ===== -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> Mi Carrito</h3>
+            <button class="cart-close" id="closeCart"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <p class="empty-cart">Tu carrito está vacío</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">$0</span>
+            </div>
+            <div class="delivery-note" id="deliveryNote">
+        </div>
+            <button class="btn primary checkout-btn" id="checkoutBtn" disabled>
+                <i class="fab fa-whatsapp"></i> Finalizar Compra
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== TESTIMONIOS ===== -->
+    <section class="section" id="testimonios">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i> Lo que dicen nuestros clientes
+                </h2>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Excelente atención y productos de primera calidad. El lomo ahumado es espectacular."</p>
+                    <div class="testimonial-author">
+                        <i class="fas fa-user-circle"></i>
+                        <div>
+                            <strong>María González</strong>
+                            <span>Cliente frecuente</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Muy buena comunicación por WhatsApp, el pedido llegó rápido y todo fresco."</p>
+                    <div class="testimonial-author">
+                        <i class="fas fa-user-circle"></i>
+                        <div>
+                            <strong>Carlos Rodríguez</strong>
+                            <span>Compra semanal</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Los vinos son excelentes y los precios competitivos. Recomendado 100%."</p>
+                    <div class="testimonial-author">
+                        <i class="fas fa-user-circle"></i>
+                        <div>
+                            <strong>Laura Pérez</strong>
+                            <span>Catadora aficionada</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PRODUCTOS DESTACADOS ===== -->
+    <section class="section" id="destacados">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i> PRODUCTOS DESTACADOS
+                </h2>
+            </div>
+            
+            <div class="featured-grid" id="featuredProducts">
+                <!-- Se carga dinámicamente con JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CATÁLOGO COMPLETO ===== -->
+    <section class="section" id="productos">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-shopping-basket"></i> NUESTROS PRODUCTOS
+                </h2>
+                <p class="section-subtitle" id="resultsCount">Mostrando todos los productos</p>
+            </div>
+            
+            <div class="categories-grid" id="productsContainer">
+                <!-- Se carga dinámicamente con JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== WHATSAPP SECTION ===== -->
+    <section class="section" id="contacto">
+        <div class="container">
+            <div class="whatsapp-section">
+                <div class="whatsapp-icon"><i class="fab fa-whatsapp"></i></div>
+                <h3>FINALIZÁ TU COMPRA</h3>
+                <p>Hacé clic en el carrito y luego en "Finalizar Compra" por WhatsApp</p>
+                
+                <div class="schedule-info">
+                    <i class="fas fa-clock"></i>
+                    <span>Atención: 7:00 AM - 9:00 PM</span>
+                </div>
+                
+                <a href="https://wa.me/5358873126" class="whatsapp-button" target="_blank">
+                    <i class="fab fa-whatsapp"></i> Contacto directo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>PADROSTORE</h2>
+                    <p>Tu tienda de confianza</p>
+                </div>
+                
+                <div class="footer-info">
+                    <p><i class="fas fa-map-marker-alt"></i> 23 y 12, Vedado, La Habana</p>
+                    <p><i class="fas fa-phone"></i> +53 5887 3126</p>
+                    <p><i class="fas fa-envelope"></i> padrostore@gmail.com</p>
+                    <p><i class="fas fa-clock"></i> Lun-Dom: 7:00 AM - 9:00 PM</p>
+                </div>
+                
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/5358873126" class="social-link" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botones flotantes -->
+    <div class="float-buttons">
+        <button class="float-button float-cart" id="showCart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <a href="https://wa.me/5358873126" class="float-button float-whatsapp" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
